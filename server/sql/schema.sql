@@ -39,6 +39,8 @@ create table if not exists public.trainer_items (
   order_index integer not null default 0,
   payload jsonb not null default '{}',
   answer text null,
+  correct_answers jsonb not null default '[]',
+  wrong_answers jsonb not null default '[]',
   created_at timestamptz not null default now()
 );
 

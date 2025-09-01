@@ -34,7 +34,8 @@ export const AdminPage: React.FC = () => {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Ошибка при создании пользователя');
+      if (!res.ok)
+        throw new Error(data?.error || 'Ошибка при создании пользователя');
       setUsers((prev) => [...prev, data.user as any]);
       setFirstName('');
       setLastName('');
@@ -85,8 +86,21 @@ export const AdminPage: React.FC = () => {
   const [tCategory, setTCategory] = useState('');
   const [tType, setTType] = useState('custom');
 
+  // Trainer items state
+  const [tiTrainerId, setTiTrainerId] = useState('');
+  const [tiOrder, setTiOrder] = useState<number>(0);
+  const [tiWords, setTiWords] = useState('');
+  const [tiCorrect, setTiCorrect] = useState('');
+  const [tiWrong, setTiWrong] = useState('');
+
   // Categories state
-  interface Category { id: string; name: string; slug: string; parent_id?: string | null; position?: number }
+  interface Category {
+    id: string;
+    name: string;
+    slug: string;
+    parent_id?: string | null;
+    position?: number;
+  }
   const [categories, setCategories] = useState<Category[]>([]);
   const [cName, setCName] = useState('');
   const [cSlug, setCSlug] = useState('');
@@ -130,9 +144,13 @@ export const AdminPage: React.FC = () => {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Ошибка при создании тренажера');
+      if (!res.ok)
+        throw new Error(data?.error || 'Ошибка при создании тренажера');
       setTrainers((prev) => [...prev, data.trainer]);
-      setTTitle(''); setTSlug(''); setTCategory(''); setTType('custom');
+      setTTitle('');
+      setTSlug('');
+      setTCategory('');
+      setTType('custom');
     } catch (e) {
       alert((e as Error).message);
     }
@@ -143,6 +161,40 @@ export const AdminPage: React.FC = () => {
       const res = await fetch(`/api/trainers/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Ошибка при удалении тренажера');
       setTrainers((p) => p.filter((t) => t.id !== id));
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  };
+
+  const onAddTrainerItem = async () => {
+    if (!tiTrainerId) return;
+    const payload = {
+      orderIndex: Number.isFinite(tiOrder) ? tiOrder : 0,
+      words: tiWords
+        .split(',')
+        .map((w) => w.trim())
+        .filter(Boolean),
+      correctAnswers: tiCorrect
+        .split(',')
+        .map((w) => w.trim())
+        .filter(Boolean),
+      wrongAnswers: tiWrong
+        .split(',')
+        .map((w) => w.trim())
+        .filter(Boolean),
+    };
+    try {
+      const res = await fetch(`/api/trainers/${tiTrainerId}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Ошибка при добавлении слов');
+      setTiOrder(0);
+      setTiWords('');
+      setTiCorrect('');
+      setTiWrong('');
     } catch (e) {
       alert((e as Error).message);
     }
@@ -163,17 +215,25 @@ export const AdminPage: React.FC = () => {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Ошибка при создании категории');
+      if (!res.ok)
+        throw new Error(data?.error || 'Ошибка при создании категории');
       setCategories((prev) => [...prev, data.category]);
-      setCName(''); setCSlug(''); setCParentId(''); setCPosition(0);
-    } catch (e) { alert((e as Error).message); }
+      setCName('');
+      setCSlug('');
+      setCParentId('');
+      setCPosition(0);
+    } catch (e) {
+      alert((e as Error).message);
+    }
   };
   const onDeleteCategory = async (id: string) => {
     try {
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Ошибка при удалении категории');
       setCategories((p) => p.filter((c) => c.id !== id));
-    } catch (e) { alert((e as Error).message); }
+    } catch (e) {
+      alert((e as Error).message);
+    }
   };
 
   if (auth.user?.role !== 'admin') {
@@ -195,58 +255,74 @@ export const AdminPage: React.FC = () => {
       <div className={styles.Header}>
         <h2>Админка</h2>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link to="/" className={styles.Button}>На главную</Link>
-          <button className={styles.Button} onClick={onLogout}>Выйти</button>
+          <Link to="/" className={styles.Button}>
+            На главную
+          </Link>
+          <button className={styles.Button} onClick={onLogout}>
+            Выйти
+          </button>
         </div>
       </div>
 
       <div className={styles.Tabs}>
-        <button className={`${styles.Tab} ${tab==='users' ? styles.TabActive : ''}`} onClick={() => setTab('users')}>Аккаунты</button>
-        <button className={`${styles.Tab} ${tab==='trainers' ? styles.TabActive : ''}`} onClick={() => setTab('trainers')}>Тренажеры</button>
+        <button
+          className={`${styles.Tab} ${tab === 'users' ? styles.TabActive : ''}`}
+          onClick={() => setTab('users')}
+        >
+          Аккаунты
+        </button>
+        <button
+          className={`${styles.Tab} ${tab === 'trainers' ? styles.TabActive : ''}`}
+          onClick={() => setTab('trainers')}
+        >
+          Тренажеры
+        </button>
       </div>
 
       {tab === 'users' && (
-      <div className={styles.Card}>
-        <h3>Добавить пользователя</h3>
-        <div className={styles.Row}>
-          <input
-            className={styles.Input}
-            placeholder="Имя"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-          <input
-            className={styles.Input}
-            placeholder="Фамилия"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
+        <div className={styles.Card}>
+          <h3>Добавить пользователя</h3>
+          <div className={styles.Row}>
+            <input
+              className={styles.Input}
+              placeholder="Имя"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <input
+              className={styles.Input}
+              placeholder="Фамилия"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+          <div className={styles.Row}>
+            <input
+              className={styles.Input}
+              placeholder="Код (логин)"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+            <input
+              className={styles.Input}
+              placeholder="Пароль"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <select
+              className={styles.Input}
+              value={role}
+              onChange={(e) => setRole(e.target.value as Role)}
+            >
+              <option value="user">Пользователь</option>
+              <option value="admin">Администратор</option>
+            </select>
+            <button className={styles.Button} onClick={onAdd}>
+              Добавить
+            </button>
+          </div>
         </div>
-        <div className={styles.Row}>
-          <input
-            className={styles.Input}
-            placeholder="Код (логин)"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <input
-            className={styles.Input}
-            placeholder="Пароль"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <select
-            className={styles.Input}
-            value={role}
-            onChange={(e) => setRole(e.target.value as Role)}
-          >
-            <option value="user">Пользователь</option>
-            <option value="admin">Администратор</option>
-          </select>
-          <button className={styles.Button} onClick={onAdd}>Добавить</button>
-        </div>
-      </div>
       )}
 
       {tab === 'users' && (
@@ -255,11 +331,20 @@ export const AdminPage: React.FC = () => {
           <div className={styles.Users}>
             {users.map((u) => (
               <div key={u.id} className={styles.Card}>
-                <div><b>{u.lastName} {u.firstName}</b></div>
+                <div>
+                  <b>
+                    {u.lastName} {u.firstName}
+                  </b>
+                </div>
                 {'username' in u && <div>Логин: {(u as any).username}</div>}
                 <div>Роль: {(u as any).role}</div>
                 <div style={{ marginTop: 8 }}>
-                  <button className={`${styles.Button} ${styles.Danger}`} onClick={() => onDelete(u.id)}>Удалить</button>
+                  <button
+                    className={`${styles.Button} ${styles.Danger}`}
+                    onClick={() => onDelete(u.id)}
+                  >
+                    Удалить
+                  </button>
                 </div>
               </div>
             ))}
@@ -272,32 +357,127 @@ export const AdminPage: React.FC = () => {
           <div className={styles.Card}>
             <h3>Добавить тренажер</h3>
             <div className={styles.Row}>
-              <input className={styles.Input} placeholder="Название" value={tTitle} onChange={(e)=>setTTitle(e.target.value)} />
-              <input className={styles.Input} placeholder="Слаг (если пусто — из названия)" value={tSlug} onChange={(e)=>setTSlug(e.target.value)} />
-              <select className={styles.Input} value={tCategory} onChange={(e)=>setTCategory(e.target.value)}>
+              <input
+                className={styles.Input}
+                placeholder="Название"
+                value={tTitle}
+                onChange={(e) => setTTitle(e.target.value)}
+              />
+              <input
+                className={styles.Input}
+                placeholder="Слаг (если пусто — из названия)"
+                value={tSlug}
+                onChange={(e) => setTSlug(e.target.value)}
+              />
+              <select
+                className={styles.Input}
+                value={tCategory}
+                onChange={(e) => setTCategory(e.target.value)}
+              >
                 <option value="">Категория (необязательно)</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.slug}>{c.name}</option>
+                  <option key={c.id} value={c.slug}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
-              <input className={styles.Input} placeholder="Тип" value={tType} onChange={(e)=>setTType(e.target.value)} />
-              <button className={styles.Button} onClick={onAddTrainer}>Добавить</button>
+              <input
+                className={styles.Input}
+                placeholder="Тип"
+                value={tType}
+                onChange={(e) => setTType(e.target.value)}
+              />
+              <button className={styles.Button} onClick={onAddTrainer}>
+                Добавить
+              </button>
             </div>
           </div>
 
           <div className={styles.Card}>
             <h3>Добавить категорию</h3>
             <div className={styles.Row}>
-              <input className={styles.Input} placeholder="Название" value={cName} onChange={(e)=>setCName(e.target.value)} />
-              <input className={styles.Input} placeholder="Слаг (если пусто — из названия)" value={cSlug} onChange={(e)=>setCSlug(e.target.value)} />
-              <select className={styles.Input} value={cParentId} onChange={(e)=>setCParentId(e.target.value)}>
+              <input
+                className={styles.Input}
+                placeholder="Название"
+                value={cName}
+                onChange={(e) => setCName(e.target.value)}
+              />
+              <input
+                className={styles.Input}
+                placeholder="Слаг (если пусто — из названия)"
+                value={cSlug}
+                onChange={(e) => setCSlug(e.target.value)}
+              />
+              <select
+                className={styles.Input}
+                value={cParentId}
+                onChange={(e) => setCParentId(e.target.value)}
+              >
                 <option value="">Родитель (необязательно)</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
-              <input className={styles.Input} placeholder="Позиция" type="number" value={cPosition} onChange={(e)=>setCPosition(Number(e.target.value))} />
-              <button className={styles.Button} onClick={onAddCategory}>Добавить</button>
+              <input
+                className={styles.Input}
+                placeholder="Позиция"
+                type="number"
+                value={cPosition}
+                onChange={(e) => setCPosition(Number(e.target.value))}
+              />
+              <button className={styles.Button} onClick={onAddCategory}>
+                Добавить
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.Card}>
+            <h3>Добавить слова к тренажеру</h3>
+            <div className={styles.Row}>
+              <select
+                className={styles.Input}
+                value={tiTrainerId}
+                onChange={(e) => setTiTrainerId(e.target.value)}
+              >
+                <option value="">Тренажер</option>
+                {trainers.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+              <input
+                className={styles.Input}
+                placeholder="Порядок"
+                type="number"
+                value={tiOrder}
+                onChange={(e) => setTiOrder(Number(e.target.value))}
+              />
+            </div>
+            <div className={styles.Row}>
+              <input
+                className={styles.Input}
+                placeholder="Слова через запятую"
+                value={tiWords}
+                onChange={(e) => setTiWords(e.target.value)}
+              />
+              <input
+                className={styles.Input}
+                placeholder="Верные слова"
+                value={tiCorrect}
+                onChange={(e) => setTiCorrect(e.target.value)}
+              />
+              <input
+                className={styles.Input}
+                placeholder="Неверные слова"
+                value={tiWrong}
+                onChange={(e) => setTiWrong(e.target.value)}
+              />
+              <button className={styles.Button} onClick={onAddTrainerItem}>
+                Добавить
+              </button>
             </div>
           </div>
 
@@ -305,12 +485,19 @@ export const AdminPage: React.FC = () => {
           <div className={styles.Users}>
             {trainers.map((t) => (
               <div key={t.id} className={styles.Card}>
-                <div><b>{t.title}</b></div>
+                <div>
+                  <b>{t.title}</b>
+                </div>
                 <div>slug: {t.slug}</div>
                 {t.categorySlug && <div>category: {t.categorySlug}</div>}
                 <div>type: {t.type}</div>
                 <div style={{ marginTop: 8 }}>
-                  <button className={`${styles.Button} ${styles.Danger}`} onClick={()=>onDeleteTrainer(t.id)}>Удалить</button>
+                  <button
+                    className={`${styles.Button} ${styles.Danger}`}
+                    onClick={() => onDeleteTrainer(t.id)}
+                  >
+                    Удалить
+                  </button>
                 </div>
               </div>
             ))}
@@ -320,12 +507,19 @@ export const AdminPage: React.FC = () => {
           <div className={styles.Users}>
             {categories.map((c) => (
               <div key={c.id} className={styles.Card}>
-                <div><b>{c.name}</b></div>
+                <div>
+                  <b>{c.name}</b>
+                </div>
                 <div>slug: {c.slug}</div>
                 {c.parent_id && <div>parent: {c.parent_id}</div>}
                 <div>position: {c.position ?? 0}</div>
                 <div style={{ marginTop: 8 }}>
-                  <button className={`${styles.Button} ${styles.Danger}`} onClick={()=>onDeleteCategory(c.id)}>Удалить</button>
+                  <button
+                    className={`${styles.Button} ${styles.Danger}`}
+                    onClick={() => onDeleteCategory(c.id)}
+                  >
+                    Удалить
+                  </button>
                 </div>
               </div>
             ))}
