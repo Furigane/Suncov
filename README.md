@@ -15,6 +15,8 @@
 - `npm run dev` - Запуск проекта в dev режиме на Webpack
 - `npm run build` - Сборка проекта с помощью Webpack
 - `npm run deploy` - Деплой проекта на Github Pages
+- `npm run db:schema` - Применение SQL схемы к базе данных (используется переменная окружения `DATABASE_URL`, подходит для Supabase)
+- `npm run db:seed:sb` - Заполнение базы начальными данными
 - `npm run lint:scss` - Запуск проверки scss файлов проекта с помощью styleLint
 - `npm run lint:scss:fix` - Запуск исправления scss файлов проекта, там где это возможно, с помощью styleLint
 - `npm run lint:ts` - Запуск проверки ts файлов проекта с помощью esLint
