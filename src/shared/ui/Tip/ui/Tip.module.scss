@@ -1,0 +1,19 @@
+.Tip {
+  margin-bottom: 20px;
+  max-width: 72%;
+
+  &__caption {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 100%;
+    color: var(--color-black);
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 100%;
+    text-align: center;
+    color: var(--color-black);
+  }
+}

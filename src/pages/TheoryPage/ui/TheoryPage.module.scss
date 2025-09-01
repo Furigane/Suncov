@@ -1,0 +1,17 @@
+@use '@/app/styles/ScssVars' as *;
+
+$mobile-ux-width: 768px;
+
+.TheoryPage {
+  &__content {
+    top: var(--header-height);
+    position: relative;
+    right: -15%;
+
+    @media (max-width: $mobile-ux-width) {
+      right: 0;
+      top: var(--theory-sidebar-height-mobile);
+      padding: 0 16px;
+    }
+  }
+}

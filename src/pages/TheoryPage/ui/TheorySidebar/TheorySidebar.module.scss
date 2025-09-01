@@ -1,0 +1,54 @@
+@use '@/app/styles/ScssVars' as *;
+
+.TheorySidebar {
+  $padding-y: 15px;
+
+  padding: $padding-y 10px;
+  border-right: 1px solid var(--color-black);
+  max-height: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  position: fixed;
+  background-color: var(--color-white);
+  top: 0;
+  transition: margin-top var(--transition-duration-default) linear;
+  z-index: var(--z-index-sidebar);
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 15%;
+  gap: 15px;
+  margin-top: 30px;
+
+  @media (max-width: 769px) {
+    margin-top: 48px;
+  }
+
+  @media (max-width: $mobile-mediaquery-width) {
+    margin-top: 100px;
+    border-right: none;
+    border-bottom: 1px solid var(--color-black);
+    padding: 20px 10px;
+    height: var(--theory-sidebar-height-mobile);
+    overflow: auto hidden;
+    flex-direction: row;
+    width: 100%;
+    z-index: 2222222;
+  }
+
+  &__title {
+    font-size: 14px;
+    color: var(--color-gray);
+    cursor: pointer;
+    transition: color var(--transition-duration-default) linear;
+
+    @media (max-width: $mobile-mediaquery-width) {
+      white-space: nowrap;
+    }
+
+    &:hover,
+    &__selected {
+      color: var(--color-black);
+    }
+  }
+}

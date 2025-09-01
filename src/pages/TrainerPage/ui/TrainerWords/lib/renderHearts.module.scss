@@ -1,0 +1,206 @@
+@use '@/app/styles/ScssVars' as *;
+
+.TrainerHearts {
+  display: inline-flex;
+  gap: 6px;
+  /* можно переопределить размер через var(--heart-size) из родителя */
+  --heart-size: 18px;
+}
+
+.TrainerHearts__heart {
+  position: relative; /* чтобы ::after (ring) был привязан к ячейке */
+  width: 33px;
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heartImg {
+  width: 33px;
+  height: 33px;
+  object-fit: contain;
+  image-rendering: auto;
+  pointer-events: none;
+  user-select: none;
+}
+.TrainerHearts__heart__filled .heartImg {
+  /* например, небольшая тень или отсутствие фильтра */
+}
+.TrainerHearts__heart__filled {}
+/* stylelint-disable-next-line block-no-empty */
+.TrainerHearts__heart__empty {
+  /* держим экспорт, без визуальных последствий */
+  --heart-empty-flag: 1;
+}
+.TrainerHearts__heart__empty:not(.TrainerHearts__heart__lose):not(.TrainerHearts__heart__oneLose) {
+  animation: heart-appear 450ms ease-out both; /* как у pulse: задаём прямо на класс */
+}
+
+/* Позитивное «кольцо», собирающееся внутрь (reverse ring) */
+.TrainerHearts__heart__empty:not(.TrainerHearts__heart__lose):not(.TrainerHearts__heart__oneLose)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(77 193 255 / 50%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: heart-ring 420ms ease-out reverse;
+}
+
+/* animations */
+.TrainerHearts__heart__pulse {
+  animation: heart-pulse 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.TrainerHearts__heart__spawn {
+  animation: heart-spawn 300ms ease-out;
+}
+
+.TrainerHearts__heart__add {
+  animation: heart-pop 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.TrainerHearts__heart__lose {
+  animation: heart-shake 120ms ease, heart-lose 500ms forwards;
+}
+
+.TrainerHearts__heart__appear {
+  animation: heart-appear 450ms ease-out forwards;
+}
+.TrainerHearts__heart__appear::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(77 193 255 / 50%); /* мягкое голубое «позитивное» кольцо */
+  border-radius: 50%;
+  opacity: 0;
+  /* используем тот же ring, но в reverse — кольцо собирается внутрь */
+  animation: heart-ring 420ms ease-out reverse;
+}
+
+@keyframes heart-appear {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.TrainerHearts__heart__lose::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255 77 77 / 60%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: heart-ring 500ms ease-out;
+}
+
+.TrainerHearts__heart__oneLose {
+  animation: heart-shake 120ms ease, heart-explode 600ms forwards;
+}
+
+@keyframes heart-spawn {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.6);
+  }
+
+  60% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heart-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes heart-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  20%, 60% {
+    transform: translateX(-2px);
+  }
+
+  40%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes heart-lose {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes heart-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes heart-explode {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .TrainerHearts__heart,
+  .TrainerHearts__heart::after {
+    animation: none;
+    transition: none;
+  }
+}
+
+.TrainerHearts__heart__lock { animation: none !important; }
+.TrainerHearts__heart__lock::after { content: none !important; }
+
+/* Ensure the 'filled' modifier is preserved by CSS Modules */
+.TrainerHearts__heart__filled { --is-filled: 1; }

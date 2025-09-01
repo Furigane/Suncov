@@ -1,0 +1,52 @@
+.AdminPage {
+  padding: 24px;
+}
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.Users {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.Card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.Field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.Input { padding: 8px 10px; border: 1px solid #d0d0d0; border-radius: 8px; }
+.Button { padding: 8px 10px; border: none; border-radius: 8px; background: #1f6feb; color: #fff; cursor: pointer; }
+.Danger { background: #e53935; }
+
+// Allow using the button style on links too
+.Button, .Button:link, .Button:visited {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.Row { display: flex; gap: 8px; align-items: center; }
+
+.Tabs {
+  display: flex;
+  gap: 8px;
+}
+.Tab {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  background: #f6f8fa;
+  cursor: pointer;
+}
+.TabActive {
+  background: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+}

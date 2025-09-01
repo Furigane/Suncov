@@ -1,0 +1,8 @@
+/build
+*storybook.log
+/node_modules
+html-report
+src/shared/config/*
+.env
+.loki.env
+storybook-static/

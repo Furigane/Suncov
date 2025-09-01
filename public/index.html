@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const ds = document.body.dataset;                 // { isdev: 'false', publicurl: 'RUSS' }
+        const isDev = (ds.isdev || '').toLowerCase() === 'true';
+        const publicUrl = (ds.publicurl || '').replace(/^\/+|\/+$/g, '');
+
+        const base = isDev || !publicUrl ? '' : `/${publicUrl}`;
+        const linkElement = document.createElement('link');
+        linkElement.rel = 'icon';
+        linkElement.type = 'image/x-icon';
+        linkElement.href = `${base}/favicon.ico`;
+        document.head.appendChild(linkElement);
+      });
+    </script>
+    <title>Сунцов Никита, русский язык</title>
+  </head>
+  <body data-isdev="false" data-publicurl="">
+    <!-- 
+    Сайт разработан веб-специалистом Evgeniy_Wis:
+    Telegram - https://t.me/evgeniy_Wis 
+    Kwork - https://kwork.ru/user/evgeniy_Wis
+    Предоставляю услуги по разработке Telegram ботом и сайтов с нуля.
+    -->
+
+    <div id="root"></div>
+    <!-- 
+    Сайт разработан веб-специалистом Evgeniy_Wis:
+    Telegram - https://t.me/evgeniy_Wis 
+    Kwork - https://kwork.ru/user/evgeniy_Wis
+    Предоставляю услуги по разработке Telegram ботом и сайтов с нуля.
+    -->
+
+    <script>
+      const redirect = sessionStorage.getItem('redirect');
+      if (redirect) {
+        sessionStorage.removeItem('redirect');
+        if (redirect !== window.location.pathname) {
+          window.history.replaceState(null, null, redirect);
+        }
+      }
+    </script>
+  </body>
+</html>

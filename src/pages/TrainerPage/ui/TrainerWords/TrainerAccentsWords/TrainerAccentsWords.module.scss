@@ -1,0 +1,74 @@
+.TrainerAccentsWords {
+  &__letter {
+    font-weight: 500;
+    font-size: 60px;
+    position: relative;
+    bottom: 3px;
+
+    @media (max-width: 768px) {
+      font-size: 40px;
+    }
+    
+    @media (max-width: 450px) {
+      font-size: 32px;
+    }
+
+    &Wrapper {
+      height: 60px;
+      width: 60px;
+
+      @media (max-width: 768px) {
+        height: 40px;
+        width: 40px;
+      }
+
+      @media (max-width: 450px) {
+        width: 29px;
+      }
+
+      &__vowel {
+        transition: var(--transition-duration-default) linear;
+        transition-property: background-color, color;
+        cursor: pointer;
+        border-radius: 100%;
+        position: relative;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+
+        &::before {
+          content: '`';
+          top: -70px;
+          right: 25px;
+          position: absolute;
+          transform: rotate(90deg);
+          opacity: 0;
+          color: var(--color-black);
+          font-size: 100px;
+          transition: linear var(--transition-duration-default) opacity;
+        }
+
+        &:hover,
+        &__focus {
+          background-color: var(--color-black);
+          color: var(--color-white);
+
+          &::before {
+            opacity: 1;
+          }
+        }
+
+        &__incorrect {
+          background-color: var(--color-gray);
+          color: var(--color-white);
+        }
+
+        &__correct {
+          &::before {
+            opacity: 1;
+            top: -55px;
+          }
+        }
+      }
+    }
+  }
+}

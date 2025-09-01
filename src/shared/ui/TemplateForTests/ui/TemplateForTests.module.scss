@@ -1,0 +1,59 @@
+.TemplateForTests {
+  &__title {
+    font-family: var(--font-family-bold);
+    font-size: 30px;
+    line-height: 100%;
+    color: var(--color-black);
+    text-transform: lowercase;
+  }
+
+  &__check {
+    margin: 50px 0;
+    align-self: flex-end;
+  }
+
+  &__totalText {
+    font-family: var(--font-family-bold);
+    font-size: 40px;
+    line-height: 150%;
+    color: var(--color-black);
+  }
+
+  &__resultsWrapper {
+    position: absolute;
+    right: 0;
+  }
+  &__content {
+    width: 60%;
+    position: relative;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      padding: 0 16px;
+    }
+  }
+
+  /* Background for results-like screens */
+  &__bgImage {
+    position: absolute;
+    left: 50%;
+    top: 35%;
+    transform: translate(-50%, -50%);
+    width: min(900px, 90%);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ensure content sits above background image */
+  &__content > *:not(.TemplateForTests__bgImage) {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__actions {
+    @media (max-width: 768px) {
+      gap: 8px;
+    }
+  }
+}

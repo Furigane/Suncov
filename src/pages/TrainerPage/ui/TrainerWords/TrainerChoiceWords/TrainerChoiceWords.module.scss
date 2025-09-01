@@ -1,0 +1,95 @@
+@use '@/app/styles/ScssVars' as *;
+
+.TrainerChoiceWords {
+  margin-top: 100px;
+
+  * {
+    line-height: 100%;
+    color: var(--color-black);
+  }
+
+  &__word {
+    font-family: var(--font-family-bold);
+    font-size: 36px;
+  }
+
+  &__choiceWords {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+
+    &Wrapper {
+      position: relative;
+      left: 10.5vw;
+
+      &__withoutCategory {
+        left: 0;
+      }
+
+      @media (max-width: $laptop-mediaquery-width) {
+        left: 0;
+      }
+
+      @media (max-width: 768px) {
+        left: 0;
+      }
+    }
+  }
+
+  &__category {
+    font-weight: 500;
+    font-size: 24px;
+    text-transform: lowercase;
+    width: 16vw;
+    color: var(--color-gray);
+    text-align: center;
+
+    @media (max-width: $laptop-mediaquery-width) {
+      width: 20vw;
+    }
+
+    @media (max-width: $tablet-mediaquery-width) {
+      width: 30vw;
+    }
+
+    @media (max-width: 768px) {
+      width: 40vw;
+    }
+  }
+
+  &__choiceWord {
+    font-weight: 500;
+    font-size: 18px;
+    padding: 22px;
+    border: 2px solid var(--color-black);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-white);
+    cursor: pointer;
+    width: 100%;
+    transition: var(--transition-duration-default) linear;
+    transition-property: background-color, color, opacity;
+    pointer-events: all;
+    word-break: break-word;
+
+    &:hover,
+    &__selected {
+      background-color: var(--color-black);
+      color: var(--color-white);
+    }
+
+    &__inactive {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+  @media (max-width: 768px) {
+    margin-top: 40px;
+    &__choiceWords {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

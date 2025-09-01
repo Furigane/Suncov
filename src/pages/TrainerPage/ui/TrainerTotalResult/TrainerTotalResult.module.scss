@@ -1,0 +1,51 @@
+.TrainerTotalResult {
+  &__totalTime {
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 150%;
+    color: var(--color-black);
+  }
+
+  &__wordWithError {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 150%;
+    text-align: center;
+    color: var(--color-black);
+  }
+
+  &__extraText {
+    font-size: 30px;
+    line-height: 150%;
+    text-align: center;
+    color: var(--color-black);
+    font-family: var(--font-family-bold);
+  }
+
+  &__textWrapper {
+    padding-bottom: 30px;
+  }
+
+  &__wrapper {
+    min-height: 90vh;
+    position: relative;
+  }
+
+  /* Absolutely positioned background image (served from public/) */
+  &__bgImage {
+    position: absolute;
+    left: 50%;
+    top: 23%;
+    transform: translate(-50%, -50%);
+    // width: min(900px, 90%);
+    opacity: 0.68;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ensure content is above the background (exclude the bg image) */
+  &__wrapper > *:not(.TrainerTotalResult__bgImage) {
+    position: relative;
+    z-index: 1;
+  }
+}

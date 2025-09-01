@@ -1,0 +1,168 @@
+@use '@/app/styles/ScssVars' as *;
+
+$mobile-ux-width: 768px;
+
+.Header {
+  height: var(--header-height);
+  min-height: var(--header-height);
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background-color: var(--color-black);
+
+  $item-padding-x: 10px;
+  $item-padding-adaptive-x: 5px;
+
+  @media (max-width: $mobile-ux-width) {
+    height: var(--header-height-mobile);
+    min-height: var(--header-height-mobile);
+    flex-direction: row;
+    z-index: 1111;
+  }
+
+  &__item {
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 100%;
+    color: var(--color-white);
+    background: var(--color-black);
+    transition: var(--transition-duration-default) linear;
+    transition-property: background-color, color;
+    user-select: none;
+    padding: 0 $item-padding-x;
+    text-transform: lowercase;
+
+    @media (max-width: $laptop-mediaquery-width) {
+      font-size: 18px;
+    }
+
+    @media (max-width: $mobile-ux-width) {
+      font-size: 20px;
+      padding: 0 16px;
+    }
+
+    &:hover,
+    &__active {
+      color: var(--color-black);
+      background: var(--color-white);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--color-white);
+      outline-offset: 2px;
+    }
+  }
+
+  &__submenu {
+    display: none;
+    $submenu-padding-x: 10px;
+
+    position: absolute;
+    opacity: 0;
+    z-index: var(--z-index-hidden);
+    transform: translateY(50px);
+    top: 30px;
+    left: 0;
+    transition: var(--transition-duration-default) linear;
+    transition-property: transform, opacity;
+    padding: $submenu-padding-x;
+
+    @media (max-width: $mobile-ux-width) {
+      left: 0;
+      right: 0;
+      top: var(--header-height-mobile);
+      width: 100vw;
+      max-height: calc(100vh - var(--header-height-mobile));
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    &__active {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+      height: 140px;
+      width: 200px;
+      background-color: #fff;
+      z-index: var(--z-index-header);
+    }
+
+    &__item {
+      font-weight: 300;
+      font-size: 22px;
+      line-height: 100%;
+      color: var(--color-gray);
+      padding: 5px;
+      width: 100%;
+      cursor: pointer;
+      white-space: nowrap;
+      text-transform: lowercase;
+      transition: var(--transition-duration-default) linear color;
+      background-color: var(--color-white);
+
+      @media (max-width: $laptop-mediaquery-width) {
+        font-size: 16px;
+      }
+
+      @media (max-width: $mobile-ux-width) {
+        font-size: 16px;
+        padding: 8px 12px;
+        word-break: break-word;
+      }
+
+      &:hover,
+      &__active {
+        color: var(--color-black);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--color-black);
+        outline-offset: 2px;
+      }
+    }
+
+    &__submenu {
+      opacity: 0;
+      transform: translateY(50px);
+      background-color: var(--color-white);
+      transition: var(--transition-duration-default) linear;
+      transition-property: transform, opacity;
+      padding-bottom: 5px;
+      padding-left: 10px;
+      z-index: var(--z-index-hidden);
+      max-height: 0;
+
+      &__visible {
+        opacity: 1;
+        transform: translateY(0);
+        z-index: var(--z-index-default);
+      }
+
+      &__column {
+        padding: 0 10px;
+      }
+    }
+  }
+}
+
+.LoginOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.LoginCard {
+  width: 360px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.LoginField { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.LoginInput { padding: 8px 10px; border: 1px solid #d0d0d0; border-radius: 8px; }
+.LoginButton { padding: 10px 12px; border: none; border-radius: 8px; background: #1f6feb; color: #fff; font-weight: 600; cursor: pointer; width: 100%; }
+.LoginClose { margin-top: 8px; text-align: center; color: #444; cursor: pointer; }

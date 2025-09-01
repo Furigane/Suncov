@@ -1,0 +1,61 @@
+.PartsOfSpeachItem {
+  background-color: var(--color-white);
+  border: 1.5px solid var(--color-black);
+  padding: 20px;
+  padding-bottom: 60px;
+  border-radius: 15px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    padding-bottom: 40px;
+  }
+
+  &__punctuationMark {
+    color: var(--color-black);
+    font-size: 30px;
+    font-weight: 700;
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+
+  &__word {
+    color: var(--color-black);
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: linear var(--transition-duration-default);
+    transition-property: background-color, color;
+    border-radius: 10px;
+    padding: 0 1.5px;
+    word-break: break-word;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+
+    &:hover:not(.PartsOfSpeachItem__word__selected) {
+      background-color: var(--color-gray);
+      color: var(--color-white);
+    }
+
+    &__selected {
+      color: var(--color-white);
+      background-color: var(--color-black);
+    }
+
+    &__error {
+      background-color: var(--color-error);
+      color: var(--color-black);
+    }
+
+    &__uncorrect {
+      background-color: var(--color-warn);
+      color: var(--color-black);
+    }
+  }
+
+  &__finished {
+    pointer-events: none;
+  }
+}
