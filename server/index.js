@@ -615,6 +615,35 @@ app.delete('/api/trainer-items/:id', async (req, res) => {
   }
 });
 
+// Simple tests endpoint (alias for materials with type "test")
+app.get('/api/tests', async (_req, res) => {
+  try {
+    if (USE_SB) {
+      const sb = getSupabase();
+      const { data, error } = await sb
+        .from('materials')
+        .select('id,title,content,slug,category_slug,created_at')
+        .eq('type', 'test');
+      if (error) return res.status(500).json({ error: 'tests list error' });
+      const tests = (data || []).map((m) => ({
+        id: m.id,
+        title: m.title,
+        ...(m.content || {}),
+      }));
+      return res.json(tests);
+    }
+    const materials = read('materials').filter((m) => m.type === 'test');
+    const tests = materials.map((m) => ({
+      id: m.id,
+      title: m.title,
+      ...(m.content || {}),
+    }));
+    res.json(tests);
+  } catch (e) {
+    res.status(500).json({ error: 'tests list error' });
+  }
+});
+
 // Materials (dictants/tests/pos)
 app.get('/api/materials', async (req, res) => {
   const { type, slug } = req.query || {};
