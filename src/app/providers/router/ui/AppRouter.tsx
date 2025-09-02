@@ -6,6 +6,7 @@ import { AppRoutes } from '@/shared/types/router';
 import { useFetchTestsRoutes } from '../lib/hooks/useFetchTestsRoutes';
 import { useFetchDictantsRoutes } from '../lib/hooks/useFetchDictantsRoutes';
 import { useFetchPartsOfSpeachRoutes } from '../lib/hooks/useFetchPartsOfSpeachRoutes';
+import TrainerBySlugPage from '@/pages/TrainerBySlugPage';
 
 export const AppRouter: React.FC = memo(() => {
   // Добавление data-атрибута в body в зависимости от режима сборк
@@ -45,6 +46,9 @@ export const AppRouter: React.FC = memo(() => {
   return (
     <Suspense fallback={<PageLoading />}>
       <Routes>
+        {/* Новый статический маршрут для тренажёров по slug */}
+        <Route path="/trainers/:slug" element={<TrainerBySlugPage />} />
+
         {Object.values(routes).map((route) =>
           'length' in route ? (
             Object.values(route).map(({ path, element }) => (
@@ -56,6 +60,7 @@ export const AppRouter: React.FC = memo(() => {
         )}
       </Routes>
     </Suspense>
+
   );
 });
 

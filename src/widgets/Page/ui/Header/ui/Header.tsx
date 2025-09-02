@@ -6,7 +6,6 @@ import { HeaderCategoryType, HeaderMenu } from '../model/types';
 import { Link, matchPath } from 'react-router-dom';
 import { transliterate } from '@/shared/utils/transliterate';
 import { isInJest } from '@/shared/tests/isInJest';
-import { getRouteLogin } from '@/shared/const/router';
 
 import { FetchProvider } from '../lib/FetchProvider/FetchProvider';
 import { useAppDispatch, useAppSelector } from '@/shared/store/config/AppStore';
@@ -18,28 +17,17 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = memo(
   ({ withHomeButton = true }): React.JSX.Element => {
-    // Обработка наведения на категории
-    const [headerHoveredCategory, setHoveredHeaderCategory] = useState<
-      string | null
-    >(null);
-
-    // Реализация показа подменю при наведении на категорию
+    const [headerHoveredCategory, setHoveredHeaderCategory] = useState<string | null>(null);
     const [visibleSubmenu, setVisibleSubmenu] = useState<string | null>(null);
 
-    // Получение дата-атрибутов из html
     const getAttr = (name: string) => document?.body?.getAttribute(name) ?? '';
     const getBool = (name: string) => (document?.body?.getAttribute(name) ?? 'false') === 'true';
 
     const publicUrl = isInJest() ? '' : getAttr('data-publicurl');
     const isDev = getBool('data-isdev');
-
     const startPath = isDev ? '' : `/${publicUrl}`;
 
-    // Делаем категории хедера стейтом
-    
     const [categories, setCategories] = useState<HeaderMenu>(headerCategories);
-
-    // Отображение загрузки, если категории не загружены
     const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
 
     const isMobile =
@@ -88,16 +76,10 @@ export const Header: React.FC<HeaderProps> = memo(
 
     return (
       <header className={styles.Header}>
-          <FetchProvider
-            setCategories={setCategories}
-            setCategoriesLoading={setCategoriesLoading}
-          >
+        <FetchProvider setCategories={setCategories} setCategoriesLoading={setCategoriesLoading}>
           <Flex maxHeight>
             {Object.entries(categories).map(([category, submenu]) => {
-              // Инициализация ссылки предмета навигации
               const itemLink = `/${headerRoutesCategories[category as HeaderCategoryType]}`;
-
-              // Инициализация начала data-testid
               const dataTestID = `Header__${category.replace(' ', '_')}`;
 
               return (
@@ -114,52 +96,46 @@ export const Header: React.FC<HeaderProps> = memo(
                     onMouseEnter={() => !isMobile && setHoveredHeaderCategory(category)}
                     onClick={() => {
                       if (isMobile && submenu.length > 0) {
-                        setHoveredHeaderCategory((prev) =>
-                          prev === category ? null : category,
-                        );
+                        setHoveredHeaderCategory((prev) => (prev === category ? null : category));
                       }
                     }}
                     tabIndex={0}
-                    className={`${styles.Header__item}
-                ${matchPath(itemLink, window.location.pathname) && styles.Header__item__active}`}
+                    className={`${styles.Header__item} ${
+                      matchPath(itemLink, window.location.pathname) && styles.Header__item__active
+                    }`}
                     data-testid={dataTestID}
                     role={submenu.length > 0 ? 'button' : undefined}
                   >
-                    {submenu.length > 0 ? (
-                      <>{category}</>
-                    ) : (
-                      <Link to={itemLink}>{category}</Link>
-                    )}
+                    {submenu.length > 0 ? <>{category}</> : <Link to={itemLink}>{category}</Link>}
                   </Flex>
 
                   {submenu.length > 0 && (
                     <Flex
                       align="start"
-                      className={`${styles.Header__submenu} 
-            ${headerHoveredCategory === category && styles.Header__submenu__active}`}
+                      className={`${styles.Header__submenu} ${
+                        headerHoveredCategory === category && styles.Header__submenu__active
+                      }`}
                       direction="column"
                       data-testid={`${dataTestID}__submenu`}
                     >
-                      {submenu.map((menuItem) => {
+                      {submenu.map((menuItem: any) => {
                         const isUsual = typeof menuItem === 'string';
 
                         return (
                           <Fragment key={isUsual ? menuItem : menuItem.theme}>
                             {isUsual
                               ? (() => {
-                                  // Инициализация предмета подменю
-                                  const submenuItemLink: string = `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(menuItem)}`;
+                                  const submenuItemLink = `/${headerRoutesCategories[
+                                    category as HeaderCategoryType
+                                  ]}/${transliterate(menuItem)}`;
 
                                   return (
                                     <Link
                                       to={submenuItemLink}
-                                      className={`${styles.Header__submenu__item} 
-                                    ${
-                                      matchPath(
-                                        `${startPath}${submenuItemLink}`,
-                                        window.location.pathname,
-                                      ) && styles.Header__submenu__item__active
-                                    }`}
+                                      className={`${styles.Header__submenu__item} ${
+                                        matchPath(`${startPath}${submenuItemLink}`, window.location.pathname) &&
+                                        styles.Header__submenu__item__active
+                                      }`}
                                       onClick={() => setHoveredHeaderCategory(null)}
                                     >
                                       {menuItem}
@@ -167,102 +143,78 @@ export const Header: React.FC<HeaderProps> = memo(
                                   );
                                 })()
                               : (() => {
-                                  // Ссылки на подменю
-                                  const submenuItemLink = (
-                                    subTheme: string,
-                                  ): string => {
+                                  // IMPORTANT: строим ссылки
+                                  const submenuItemLink = (subTheme: string, slug?: string): string => {
                                     if (category === 'Тренажеры') {
-                                      const trainerSubTheme = `задание 9 — ${subTheme}`;
-                                      return `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(trainerSubTheme)}`;
+                                      // /trainers/:slug
+                                      return `/${headerRoutesCategories[category as HeaderCategoryType]}/${slug}`;
                                     }
-
-                                    return `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(menuItem.theme)}/${transliterate(subTheme)}`;
+                                    // обычные разделы
+                                    return `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(
+                                      menuItem.theme,
+                                    )}/${transliterate(subTheme)}`;
                                   };
 
-                                  // Разбитие подменю на слайсы по 10 штук
-                                  const submenuItems = menuItem.items.reduce<
-                                    Array<typeof menuItem.items>
-                                  >((acc, item, index) => {
-                                    const chunkIndex = Math.floor(index / 10);
-
-                                    if (!acc[chunkIndex]) {
-                                      acc[chunkIndex] = [];
-                                    }
-
-                                    acc[chunkIndex].push(item);
-                                    return acc;
-                                  }, []);
+                                  // колонки по 10 элементов
+                                  const submenuItems = menuItem.items.reduce(
+                                    (acc: Array<typeof menuItem.items>, item: any, index: number) => {
+                                      const chunkIndex = Math.floor(index / 10);
+                                      if (!acc[chunkIndex]) acc[chunkIndex] = [];
+                                      acc[chunkIndex].push(item);
+                                      return acc;
+                                    },
+                                    [],
+                                  );
 
                                   const isTrainerCategory = category === 'Тренажеры';
-                                  const parentLink = isTrainerCategory
-                                    ? `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(menuItem.theme)}`
-                                    : undefined;
 
                                   return (
-                                    <Flex
-                                      onMouseLeave={() => setVisibleSubmenu(null)}
-                                      align="start"
-                                    >
-                                      {isTrainerCategory ? (
-                                        <Link
-                                          to={parentLink!}
-                                          className={`${styles.Header__submenu__item} 
-                                    ${
-                                      window.location.pathname.startsWith(
-                                        `${startPath}/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(menuItem.theme)}`,
-                                      ) && styles.Header__submenu__item__active
-                                    }`}
-                                          onMouseEnter={() => setVisibleSubmenu(menuItem.theme)}
-                                        >
-                                          {menuItem.theme}
-                                        </Link>
-                                      ) : (
-                                        <span
-                                          className={`${styles.Header__submenu__item} 
-                                    ${
-                                      window.location.pathname.startsWith(
-                                        `${startPath}/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(menuItem.theme)}/`,
-                                      ) && styles.Header__submenu__item__active
-                                    }`}
-                                          onMouseEnter={() => setVisibleSubmenu(menuItem.theme)}
-                                        >
-                                          {menuItem.theme}
-                                        </span>
-                                      )}
+                                    <Flex onMouseLeave={() => setVisibleSubmenu(null)} align="start">
+                                      {/* Заголовок колонки */}
+                                      <span
+                                        className={`${styles.Header__submenu__item} ${
+                                          window.location.pathname.startsWith(
+                                            `${startPath}/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(
+                                              menuItem.theme,
+                                            )}`,
+                                          ) && styles.Header__submenu__item__active
+                                        }`}
+                                        onMouseEnter={() => setVisibleSubmenu(menuItem.theme)}
+                                      >
+                                        {menuItem.theme}
+                                      </span>
 
                                       <Flex
                                         align="start"
                                         data-testid={`${dataTestID}__submenu__submenu`}
-                                        className={`${styles.Header__submenu__submenu} 
-                                        ${visibleSubmenu === menuItem.theme && styles.Header__submenu__submenu__visible}`}
+                                        className={`${styles.Header__submenu__submenu} ${
+                                          visibleSubmenu === menuItem.theme &&
+                                          styles.Header__submenu__submenu__visible
+                                        }`}
                                       >
-                                        {submenuItems.map((items) => (
+                                        {submenuItems.map((items: any[]) => (
                                           <Flex
-                                            key={items[0].subtheme}
+                                            key={(items[0]?.slug as string) || items[0]?.subtheme}
                                             direction="column"
                                             align="start"
-                                            className={
-                                              styles.Header__submenu__submenu__column
-                                            }
+                                            className={styles.Header__submenu__submenu__column}
                                           >
-                                            {items.map((item) => (
-                                              <Link
-                                                className={`${styles.Header__submenu__item} 
-                                              ${
-                                                matchPath(
-                                                  `${startPath}${submenuItemLink(
-                                                    item.subtheme,
-                                                  )}`,
-                                                  window.location.pathname,
-                                                ) &&
-                                                styles.Header__submenu__item__active
-                                              }`}
-                                                to={submenuItemLink(item.subtheme)}
-                                                key={item.subtheme}
-                                              >
-                                                {item.subtheme}
-                                              </Link>
-                                            ))}
+                                            {items.map((item: any) => {
+                                              const link = submenuItemLink(item.subtheme, item.slug);
+                                              const key = item.slug ?? item.subtheme;
+                                              return (
+                                                <Link
+                                                  className={`${styles.Header__submenu__item} ${
+                                                    matchPath(`${startPath}${link}`, window.location.pathname) &&
+                                                    styles.Header__submenu__item__active
+                                                  }`}
+                                                  to={link}
+                                                  key={key}
+                                                >
+                                                  {item.subtheme}
+                                                </Link>
+                                              );
+                                            })}
                                           </Flex>
                                         ))}
                                       </Flex>
@@ -278,68 +230,81 @@ export const Header: React.FC<HeaderProps> = memo(
               );
             })}
           </Flex>
-{/* 
-          {categoriesLoading && (
-            <Flex maxHeight justify="center">
-              <span className={styles.Header__item}>Идёт загрузка...</span>
-            </Flex>
-          )} */}
 
-          <div style={{display: 'flex', alignItems: 'center'}}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <Flex maxHeight justify="center" className={styles.Header__item}>
-            <Link to="/">Домой</Link>
-          </Flex>
-          <Flex maxHeight>
-            {auth.isAuthenticated ? (
-              <>
-                {auth.user?.role === 'admin' && (
-                  <Link to="/admin" className={styles.Header__item}>Админка</Link>
-                )}
+              <Link to="/">Домой</Link>
+            </Flex>
+            <Flex maxHeight>
+              {auth.isAuthenticated ? (
+                <>
+                  {auth.user?.role === 'admin' && (
+                    <Link to="/admin" className={styles.Header__item}>
+                      Админка
+                    </Link>
+                  )}
+                  <span
+                    className={styles.Header__item}
+                    role="button"
+                    tabIndex={0}
+                    onClick={async () => {
+                      try {
+                        await fetch('/api/auth/logout', { method: 'POST' });
+                      } catch {}
+                      dispatch(authActions.logout());
+                    }}
+                  >
+                    Выйти
+                  </span>
+                </>
+              ) : (
                 <span
                   className={styles.Header__item}
                   role="button"
                   tabIndex={0}
-                  onClick={async () => { try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(_){}; dispatch(authActions.logout()); }}
+                  onClick={() => setLoginOpen(true)}
                 >
-                  Выйти
+                  Войти
                 </span>
-              </>
-            ) : (
-              <span
-                className={styles.Header__item}
-                role="button"
-                tabIndex={0}
-                onClick={() => setLoginOpen(true)}
-              >
-                Войти
-              </span>
-            )}
-          </Flex>
+              )}
+            </Flex>
           </div>
-          </FetchProvider>
+        </FetchProvider>
 
-      {loginOpen && (
-        <div className={styles.LoginOverlay} onClick={() => setLoginOpen(false)}>
-          <div className={styles.LoginCard} onClick={(e) => e.stopPropagation()}>
-            <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 10 }}>Вход</div>
-            <form onSubmit={onLogin}>
-              <div className={styles.LoginField}>
-                <label>Логин</label>
-                <input className={styles.LoginInput} value={username} onChange={(e) => setUsername(e.target.value)} />
+        {loginOpen && (
+          <div className={styles.LoginOverlay} onClick={() => setLoginOpen(false)}>
+            <div className={styles.LoginCard} onClick={(e) => e.stopPropagation()}>
+              <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 10 }}>Вход</div>
+              <form onSubmit={onLogin}>
+                <div className={styles.LoginField}>
+                  <label>Логин</label>
+                  <input
+                    className={styles.LoginInput}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div className={styles.LoginField}>
+                  <label>Пароль</label>
+                  <input
+                    type="password"
+                    className={styles.LoginInput}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                {loginError && <div style={{ color: '#e53935', marginBottom: 8 }}>{loginError}</div>}
+                <button className={styles.LoginButton} type="submit">
+                  Войти
+                </button>
+              </form>
+              <div className={styles.LoginClose} onClick={() => setLoginOpen(false)}>
+                Закрыть
               </div>
-              <div className={styles.LoginField}>
-                <label>Пароль</label>
-                <input type="password" className={styles.LoginInput} value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-              {loginError && <div style={{ color: '#e53935', marginBottom: 8 }}>{loginError}</div>}
-              <button className={styles.LoginButton} type="submit">Войти</button>
-            </form>
-            <div className={styles.LoginClose} onClick={() => setLoginOpen(false)}>Закрыть</div>
-            <div className={styles.LoginClose}>Админ по умолчанию: admin / admin</div>
+              <div className={styles.LoginClose}>Админ по умолчанию: admin / admin</div>
+            </div>
           </div>
-        </div>
-      )}
-
+        )}
       </header>
     );
   },
