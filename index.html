@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"/><meta http-equiv="X-UA-Compatible" content="ie=edge"/><script>window.addEventListener('DOMContentLoaded', () => {
+        const ds = document.body.dataset;                 // { isdev: 'false', publicurl: 'RUSS' }
+        const isDev = (ds.isdev || '').toLowerCase() === 'true';
+        const publicUrl = (ds.publicurl || '').replace(/^\/+|\/+$/g, '');
+
+        const base = isDev || !publicUrl ? '' : `/${publicUrl}`;
+        const linkElement = document.createElement('link');
+        linkElement.rel = 'icon';
+        linkElement.type = 'image/x-icon';
+        linkElement.href = `${base}/favicon.ico`;
+        document.head.appendChild(linkElement);
+      });</script><title>Сунцов Никита, русский язык</title><script defer="defer" src="/main.a5d4ac254b2f6065cd84.js"></script><link href="/css/main.12ecb5c6.css" rel="stylesheet"></head><body data-isdev="false" data-publicurl=""><div id="root"></div><script>const redirect = sessionStorage.getItem('redirect');
+      if (redirect) {
+        sessionStorage.removeItem('redirect');
+        if (redirect !== window.location.pathname) {
+          window.history.replaceState(null, null, redirect);
+        }
+      }</script></body></html>
