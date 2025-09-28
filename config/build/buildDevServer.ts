@@ -9,7 +9,7 @@ export function buildDevServer(options: BuildOptions): DevServerConfiguration {
     proxy: [
       {
         context: ['/api'],
-        target: 'http://localhost:4000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
     ],

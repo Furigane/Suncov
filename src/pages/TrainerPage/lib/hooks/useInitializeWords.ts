@@ -25,10 +25,23 @@ export const useInitializeWords = (
       word.inProgress = false;
     }
 
+    // wordsCopy - массив всех слов с изначальными параметрами
     setWords(wordsCopy);
   }, [setWords, words]);
 
   return {
     initializeWords,
   };
+};
+
+
+export const useInitializeWordsTest = (
+  words: WordsForTrainersTypes[],
+): any => {
+
+  const wordsCopy: WordsForTrainersTypes[] = JSON.parse(
+      JSON.stringify(words),
+    );
+
+  return wordsCopy;
 };

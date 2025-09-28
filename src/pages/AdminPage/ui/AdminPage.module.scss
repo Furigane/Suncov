@@ -25,6 +25,7 @@
 .Field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
 .Input { padding: 8px 10px; border: 1px solid #d0d0d0; border-radius: 8px; }
 .Button { padding: 8px 10px; border: none; border-radius: 8px; background: #1f6feb; color: #fff; cursor: pointer; }
+.Secondary { background: #6e7781; }
 .Danger { background: #e53935; }
 
 // Allow using the button style on links too

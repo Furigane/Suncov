@@ -98,12 +98,7 @@ export const TemplateForTests: React.FC<TemplateForTestsProps> = memo(
           justify="center"
           direction="column"
         >
-          <img
-            src={trainerResultsBg}
-            alt=""
-            aria-hidden
-            className={styles.TemplateForTests__bgImage}
-          />
+          {/* Фон-картинка trainerResultsBg теперь только для тренажёров */}
           {testElement}
 
           {/* {progressBarPercent !== undefined && (

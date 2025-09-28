@@ -1,4 +1,4 @@
-import { Flex } from '@/shared/lib/Stack';
+﻿import { Flex } from '@/shared/lib/Stack';
 import * as styles from './Header.module.scss';
 import { Fragment, memo, useEffect, useState } from 'react';
 import { headerCategories, headerRoutesCategories } from '../model/data';
@@ -78,8 +78,10 @@ export const Header: React.FC<HeaderProps> = memo(
       <header className={styles.Header}>
         <FetchProvider setCategories={setCategories} setCategoriesLoading={setCategoriesLoading}>
           <Flex maxHeight>
-            {Object.entries(categories).map(([category, submenu]) => {
-              const itemLink = `/${headerRoutesCategories[category as HeaderCategoryType]}`;
+            {(Object.entries(categories) as Array<[string, any[]]>).map(([category, submenu]) => {
+              const routeSlug =
+                headerRoutesCategories[category as HeaderCategoryType] ?? 'trainers';
+              const itemLink = `/${routeSlug}`;
               const dataTestID = `Header__${category.replace(' ', '_')}`;
 
               return (
@@ -143,19 +145,19 @@ export const Header: React.FC<HeaderProps> = memo(
                                   );
                                 })()
                               : (() => {
-                                  // IMPORTANT: строим ссылки
+                                  // IMPORTANT: ╤Б╤В╤А╨╛╨╕╨╝ ╤Б╤Б╤Л╨╗╨║╨╕
                                   const submenuItemLink = (subTheme: string, slug?: string): string => {
                                     if (category === 'Тренажеры') {
                                       // /trainers/:slug
                                       return `/${headerRoutesCategories[category as HeaderCategoryType]}/${slug}`;
                                     }
-                                    // обычные разделы
+                                    // ╨╛╨▒╤Л╤З╨╜╤Л╨╡ ╤А╨░╨╖╨┤╨╡╨╗╤Л
                                     return `/${headerRoutesCategories[category as HeaderCategoryType]}/${transliterate(
                                       menuItem.theme,
                                     )}/${transliterate(subTheme)}`;
                                   };
 
-                                  // колонки по 10 элементов
+                                  // ╨║╨╛╨╗╨╛╨╜╨║╨╕ ╨┐╨╛ 10 ╤Н╨╗╨╡╨╝╨╡╨╜╤В╨╛╨▓
                                   const submenuItems = menuItem.items.reduce(
                                     (acc: Array<typeof menuItem.items>, item: any, index: number) => {
                                       const chunkIndex = Math.floor(index / 10);
@@ -170,7 +172,7 @@ export const Header: React.FC<HeaderProps> = memo(
 
                                   return (
                                     <Flex onMouseLeave={() => setVisibleSubmenu(null)} align="start">
-                                      {/* Заголовок колонки */}
+                                      {/* ╨Ч╨░╨│╨╛╨╗╨╛╨▓╨╛╨║ ╨║╨╛╨╗╨╛╨╜╨║╨╕ */}
                                       <span
                                         className={`${styles.Header__submenu__item} ${
                                           window.location.pathname.startsWith(
@@ -232,9 +234,11 @@ export const Header: React.FC<HeaderProps> = memo(
           </Flex>
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Flex maxHeight justify="center" className={styles.Header__item}>
-              <Link to="/">Домой</Link>
-            </Flex>
+            {withHomeButton && (
+              <Flex maxHeight justify="center" className={styles.Header__item}>
+                <Link to="/">Домой</Link>
+              </Flex>
+            )}
             <Flex maxHeight>
               {auth.isAuthenticated ? (
                 <>
@@ -301,7 +305,6 @@ export const Header: React.FC<HeaderProps> = memo(
               <div className={styles.LoginClose} onClick={() => setLoginOpen(false)}>
                 Закрыть
               </div>
-              <div className={styles.LoginClose}>Админ по умолчанию: admin / admin</div>
             </div>
           </div>
         )}

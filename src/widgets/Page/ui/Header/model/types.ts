@@ -1,11 +1,19 @@
-export interface HeaderSubItem {
+﻿export interface HeaderSubItem {
   subtheme: string;
+  slug?: string;
 }
 
 export interface HeaderSubMenu {
   items: HeaderSubItem[];
   theme: string;
 }
+
+export type HeaderCategoryTitle =
+  | 'Части речи'
+  | 'Тесты'
+  | 'Диктанты'
+  | 'Теория'
+  | 'Тренажеры';
 
 export type HeaderMenu = {
   'Части речи': string[];
@@ -15,8 +23,6 @@ export type HeaderMenu = {
   Тренажеры: Array<string | HeaderSubMenu>;
 };
 
-export type HeaderCategoryType = keyof HeaderMenu;
+export type HeaderCategoryType = HeaderCategoryTitle;
 
-export type HeaderRoutes = {
-  [key in HeaderCategoryType]: string;
-};
+export type HeaderRoutes = Record<HeaderCategoryType, string>;

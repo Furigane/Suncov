@@ -42,7 +42,7 @@ export const LoginPage: React.FC = () => {
           {error && <div className={styles.Note} style={{ color: '#e53935' }}>{error}</div>}
           <button className={styles.Button} type="submit">Войти</button>
         </form>
-        <div className={styles.Note}>Админ по умолчанию: admin / admin (локально)</div>
+        <div className={styles.Note}></div>
       </div>
     </div>
   );
